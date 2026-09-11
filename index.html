@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kidz</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-home-shell">
+      <div class="auth-ambient auth-ambient-a"></div>
+      <div class="auth-ambient auth-ambient-b"></div>
+
+      <div class="auth-home-center">
+        <div class="home-kicker"><span class="home-dot"></span> KIDZ PRIVATE NETWORK</div>
+
+        <img class="auth-graffiti-logo" src="assets/branding/kidz-graffiti.png" alt="Kidz">
+
+        <h1>ACCESO<br><em>PRIVADO.</em></h1>
+        <p class="auth-home-lead">Seleccioná tu perfil para ingresar a la base.</p>
+
+        <div class="auth-word-nav">
+          <button class="auth-word" id="loginOgBtn" type="button">
+            <span class="auth-word-title">OG</span>
+            <span class="auth-word-desc">Acceso de lectura</span>
+          </button>
+          <button class="auth-word" id="showAdminLoginBtn" type="button">
+            <span class="auth-word-title">ADMIN</span>
+            <span class="auth-word-desc">Gestionar la base</span>
+          </button>
+        </div>
+
+        <div class="admin-login-box auth-admin-inline hidden" id="adminLoginBox">
+          <div class="password-row">
+            <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Contraseña de administrador">
+            <button class="auth-enter-btn" id="loginAdminBtn" type="button">ENTRAR</button>
+          </div>
+          <div class="auth-error" id="authError"></div>
+        </div>
+
+        <div class="home-footer-line auth-footer-line"><span></span><b>KIDZ // PRIVATE ACCESS</b><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header hidden" id="siteHeader">
+    <div class="brand-wrap brand-image-only">
+      <div class="brand-mark brand-mark-image"><img src="assets/branding/kidz-graffiti.png" alt="Kidz"></div>
+    </div>
+
+    <nav class="top-nav">
+      <button class="nav-btn home-return-btn" id="returnHomeBtn">Inicio</button>
+      <button class="nav-btn active" data-view="robberies">Robos</button>
+      <button class="nav-btn" data-view="locations">Ubicaciones</button>
+      <button class="nav-btn" data-view="drugs">Info drogas</button>
+      <button class="nav-btn" data-view="crafts">Crafteos</button>
+      <button class="nav-btn" data-view="sales">Ventas</button>
+      <button class="nav-btn" data-view="members">Miembros</button>
+    </nav>
+    <div class="header-admin-actions"><button class="session-btn" id="logoutBtn" title="Cambiar perfil">CAMBIAR PERFIL</button></div>
+  </header>
+
+  <main class="main">
+    <section id="view-home" class="view active home-redesign">
+      <div class="home-shell home-v2">
+        <div class="home-ambient home-ambient-a"></div>
+        <div class="home-ambient home-ambient-b"></div>
+        <div class="home-center">
+          <div class="home-kicker"><span class="home-dot"></span> KIDZ PRIVATE NETWORK</div>
+          <div class="home-logo-line home-graffiti-wrap"><img class="home-graffiti-logo" src="assets/branding/kidz-graffiti.png" alt="Kidz"></div>
+          <h1>TODO EN UN<br><em>SOLO LUGAR.</em></h1>
+          <p class="home-lead">Acceso rápido a la información de la banda.</p>
+          <div class="home-word-nav">
+            <button class="home-word" data-go="robberies"><span class="home-word-index">01</span><span class="home-word-title">ROBOS</span><span class="home-word-desc">Mapas, explicaciones y hackeos</span></button>
+            <button class="home-word" data-go="locations"><span class="home-word-index">02</span><span class="home-word-title">UBICACIONES</span><span class="home-word-desc">Puntos importantes y mapas</span></button>
+            <button class="home-word" data-go="drugs"><span class="home-word-index">03</span><span class="home-word-title">DROGAS</span><span class="home-word-desc">Procesos y referencias</span></button>
+            <button class="home-word" data-go="crafts"><span class="home-word-index">04</span><span class="home-word-title">CRAFTEOS</span><span class="home-word-desc">Recetas y calculadora</span></button>
+            <button class="home-word home-word-soon" data-go="sales"><span class="home-word-index">05</span><span class="home-word-title">VENTAS</span><span class="home-word-desc">Próximamente</span></button>
+            <button class="home-word" data-go="members"><span class="home-word-index">06</span><span class="home-word-title">MIEMBROS</span><span class="home-word-desc">Personajes y biblioteca</span></button>
+          </div>
+          <div class="home-footer-line"><span></span><b>KIDZ // PRIVATE ACCESS</b><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-robberies" class="view robberies-redesign">
+      <div id="robberiesMainHead" class="robberies-head">
+        <div class="robberies-kicker">KIDZ // ROBBERIES DATABASE</div>
+        <h2>Robos y hackeos</h2>
+        <p>Información y procesos del servidor Prodigy RP.</p>
+      </div>
+
+      <div class="robbery-toolbar">
+        <div class="robbery-search-wrap">
+          <input id="robberySearch" class="robbery-search" type="search" placeholder="Buscar robo..." autocomplete="off">
+        </div>
+        <button id="cmsAddRobberyBtn" class="cms-text-action admin-only" type="button">+ NUEVO ROBO</button>
+      </div>
+
+      <div id="robberySelector" class="robbery-selector"></div>
+      <div id="robberyDetail" class="robbery-detail" hidden></div>
+    </section>
+
+    <section id="view-locations" class="view map-demo-view">
+  <div class="map-page-head">
+    <div class="map-hacker-label">KIDZ // MAP DATABASE</div>
+    <h2>Ubicaciones</h2>
+    <p>Navegá todo San Andreas o buscá una ubicación.</p>
+  </div>
+
+  <div class="map-layout map-layout-clean">
+    <div class="gta-map-shell" id="gtaMapShell">
+      <div class="gta-map-stage" id="gtaMapStage">
+        <img class="gta-map-image" id="gtaMapImage" src="https://www.igta5.com/images/gtav-map-roadmap-huge.jpg" alt="Mapa limpio completo de GTA V" draggable="false">
+        <div id="mapMarkersLayer" class="map-markers-layer"></div>
+      </div>
+      <div class="map-image-controls">
+        <button type="button" id="mapZoomOut" aria-label="Alejar">−</button>
+        <button type="button" id="mapReset" aria-label="Restablecer">⌂</button>
+        <button type="button" id="mapZoomIn" aria-label="Acercar">+</button>
+      </div>
+      <div class="map-help">Arrastrar · Rueda: zoom · Doble click: acercar</div>
+    </div>
+
+    <aside class="map-side-panel map-side-clean">
+      <div class="map-search-wrap">
+        <input id="mapSearchInput" type="text" placeholder="Buscar ubicación..." autocomplete="off">
+        <div class="map-search-results" id="mapSearchResults"></div>
+      </div>
+
+      <div class="map-admin-tools admin-only">
+        <button type="button" id="mapAddLocationBtn" class="map-admin-add">+ NUEVA UBICACIÓN</button>
+      </div>
+
+      <div class="map-side-title">UBICACIONES</div>
+      <div id="mapLocationList" class="map-location-list map-location-list-clean"></div>
+    </aside>
+  </div>
+</section>
+
+    <section id="view-drugs" class="view drugs-selector-view">
+      <div class="section-head drugs-selector-head">
+        <div>
+          <h2>Procesos y drogas</h2>
+          <p class="section-subtitle">Seleccioná una para consultar su información.</p>
+        </div>
+        
+      </div>
+
+      <div class="drug-selector" id="drugSelector"></div>
+      <div class="drug-detail-shell" id="drugDetailShell"></div>
+    </section>
+
+    <section id="view-crafts" class="view">
+      <div class="section-head">
+        <div>
+          <span class="badge">CRAFTEOS</span>
+          <h2>Recetas y materiales</h2>
+        </div>
+        <div class="head-actions craft-head-actions">
+          <button class="craft-calculator-link" id="openCalculatorBtn" type="button" onclick="window.openCraftCalculator && window.openCraftCalculator()">ABRIR CALCULADORA</button>
+          <button class="craft-new-btn admin-only" id="addCraftBtn" type="button">+ NUEVO</button>
+        </div>
+        <!-- Legacy import nodes kept hidden so existing JS remains stable -->
+        <button id="downloadTemplateBtn" type="button" hidden aria-hidden="true"></button>
+        <input id="craftImportInput" type="file" hidden aria-hidden="true">
+      </div>
+      <div class="section-search-wrap">
+        <input id="craftsSearch" class="section-search" type="search" placeholder="Buscar crafteos, materiales o categorías...">
+      </div>
+      <div id="craftsGrid" class="content-grid"></div>
+    </section>
+
+
+    <section id="view-hacks" class="view">
+      <div class="section-head">
+        <div>
+          <span class="badge">PRÁCTICA</span>
+          <h2>Practicar hackeos</h2>
+        </div>
+      </div>
+      <div class="coming-soon-panel hack-coming-soon">
+        <div class="coming-soon-icon">⌘</div>
+        <span class="badge">EN DESARROLLO</span>
+        <h2>Próximamente</h2>
+        <p>La zona de práctica de hackeos todavía no está disponible.</p>
+        <button class="ghost-btn" id="hacksBackBtn">Volver</button>
+      </div>
+    </section>
+
+    
+    <section id="view-members" class="view members-view">
+      <div class="members-hero">
+        <div class="members-kicker">KIDZ // CREW DATABASE</div>
+        <h2>Miembros</h2>
+        <p>Personajes que forman parte de Kidz.</p>
+      </div>
+
+      <div class="members-toolbar admin-only">
+        <button type="button" class="members-text-action" id="addMemberBtn">+ NUEVO MIEMBRO</button>
+      </div>
+
+      <div id="membersGrid" class="members-grid"></div>
+
+      <div class="members-gallery-section">
+        <div class="members-gallery-head">
+          <div>
+            <div class="members-gallery-kicker">KIDZ // ARCHIVE</div>
+            <h3>Biblioteca</h3>
+            <p>Fotos, recuerdos y momentos del grupo.</p>
+          </div>
+          <button type="button" class="members-text-action admin-only" id="addGalleryPhotoBtn">+ AÑADIR FOTO</button>
+        </div>
+
+        <div id="membersGallery" class="members-gallery"></div>
+      </div>
+
+      <input id="memberPhotoInput" type="file" accept="image/*" hidden>
+      <input id="galleryPhotoInput" type="file" accept="image/*" hidden>
+    </section>
+
+    <section id="view-sales" class="view">
+      <div class="section-head">
+        <div>
+          <span class="badge">VENTAS</span>
+          <h2>Gestión de ventas</h2>
+        </div>
+      </div>
+      <div class="coming-soon-panel">
+        <div class="coming-soon-icon">$</div>
+        <span class="badge">EN DESARROLLO</span>
+        <h2>Próximamente</h2>
+        <p>La sección de ventas todavía no está disponible.</p>
+        <button class="ghost-btn" data-go="home" id="salesHomeBtn">Volver a inicio</button>
+      </div>
+    </section>
+  </main>
+
+  <aside id="liveCraftSidebar" class="live-craft-sidebar">
+    <div class="live-sidebar-head">
+      <div>
+        <span class="badge">CRAFTEO ACTIVO</span>
+        <h3>Lista rápida</h3>
+      </div>
+      <button id="closeLiveSidebar" class="live-close">×</button>
+    </div>
+    <div id="liveCraftItems" class="live-craft-items"></div>
+    <div class="live-materials">
+      <h4>Total de materiales</h4>
+      <div id="liveCraftTotals"></div>
+    </div>
+    <button id="clearLiveCrafts" class="ghost-btn live-clear">Vaciar selección</button>
+  </aside>
+
+  <div class="floating-tools admin-only">
+    <button id="exportBtn" title="Exportar datos">↓</button>
+    <label title="Importar backup">↑<input id="importInput" type="file" accept=".json" hidden></label>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal>×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <input id="hiddenImageInput" type="file" accept="image/*" hidden />
+
+  <script src="app.js"></script>
+  <script src="map.js"></script>
+  <script src="drugs.js"></script>
+  <script src="members.js"></script>
+  <script src="craft-sidebar.js"></script>
+  <script src="robberies.js"></script>
+  <script src="admin-editor.js"></script>
+  <script async src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+
+
+</body>
+</html>

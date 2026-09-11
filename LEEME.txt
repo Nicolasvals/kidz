@@ -1,0 +1,161 @@
+Kidz TEST 1.9
+
+Perfiles:
+- OG: acceso de lectura, sin contraseña.
+- Admin: acceso completo. Contraseña: configurada en Supabase Edge Function Secrets
+
+Cambios 1.9:
+- La sección anterior Ubicaciones pasa a llamarse Robos y conserva la práctica de hackeos.
+- Nueva sección Ubicaciones independiente: nombre, mapa y descripción.
+- Migración automática de los registros anteriores a Robos.
+- Nuevo diseño exclusivo para la pantalla de inicio.
+- Ventas y Practicar hackeos permanecen como Próximamente.
+
+
+KIDZ 2.4 - DROGAS EN CODIGO
+- La sección Drogas ya no se completa desde el panel Admin.
+- Está escrita directamente en index.html.
+- Imágenes: assets/drugs/
+- Para cambiar textos, buscá en index.html: <section id="view-drugs">
+- Los procesos actuales son placeholders ficticios del juego y se pueden reemplazar.
+
+
+KIDZ 2.5 - SELECTOR DE DROGAS
+- Las 4 imágenes aparecen alineadas en una sola fila en escritorio.
+- No se muestran títulos debajo de las imágenes.
+- Hover: la ilustración se ilumina y se eleva.
+- Click: la opción queda seleccionada y carga debajo su explicación/proceso.
+- Para modificar textos: index.html > view-drugs.
+- Para modificar animaciones/medidas: styles.css > KIDZ 2.5 // DRUG IMAGE SELECTOR.
+
+
+KIDZ 2.6
+- Eliminados los indicadores 01/02/03/04 de la sección Drogas.
+- Ninguna droga aparece seleccionada al cargar.
+- La explicación/proceso aparece recién al hacer clic, con animación.
+- Mayor separación entre títulos/subtítulos y líneas decorativas en toda la app.
+
+
+KIDZ 2.7
+- Drogas inicia con las cuatro imágenes en línea.
+- Al seleccionar una, la elegida se desplaza a la izquierda y aparece el detalle a la derecha.
+- Botón Volver para cerrar el detalle y recuperar las cuatro imágenes.
+- Escape también cierra la vista de detalle.
+- Animaciones de imagen, texto y retorno.
+- Más separación global entre subtítulos y líneas decorativas.
+
+
+KIDZ 2.8
+- Header de Drogas más compacto y centrado.
+- Solo queda el label KIDZ // DATABASE.
+- Eliminada la segunda línea bajo el subtítulo.
+- Eliminado el botón Volver.
+- Segundo clic sobre la droga seleccionada cierra el detalle y vuelve a las 4 imágenes.
+- Mejor centrado vertical del selector y la vista de detalle.
+
+
+KIDZ 2.9
+- Robos ya no queda azul por defecto en Inicio.
+- "Volver a inicio" pasa a "Inicio" y usa el mismo estilo del menú.
+- Drogas centrado de nuevo desde cero.
+- Un solo KIDZ // DATABASE.
+- Eliminadas las líneas separadoras extra de Drogas.
+- Selector de imágenes centrado y balanceado.
+
+
+KIDZ 3.0
+- Imágenes de Drogas más grandes.
+- Encabezado y selector movidos más arriba.
+- Vista de detalle restaurada al balance visual de 2.8:
+  imagen a la izquierda + texto a la derecha.
+
+
+KIDZ 3.1
+- Barra superior centrada como bloque.
+- INICIO usa exactamente el mismo estilo visual que el resto del menú.
+- Hover y estado activo unificados.
+
+
+KIDZ 3.2 - MAPA INTERACTIVO DEMO
+- Ubicaciones ahora usa un mapa interactivo de Los Santos.
+- Zoom con rueda o botones + / -.
+- Arrastre con mouse.
+- Buscador con enfoque automático.
+- Marcadores clickeables.
+- 5 ubicaciones de ejemplo, no definitivas.
+- El mapa se carga desde una URL externa para esta demo.
+
+
+HOTFIX LOGIN
+- Corregido el arranque al abrir index.html directamente desde Windows.
+- OG vuelve a entrar sin contraseña.
+- Admin: contraseña configurada en Supabase
+
+
+LOGIN FIX V2
+- Corregido bucle recursivo en generador de IDs.
+- OG sin contraseña.
+- Admin: contraseña configurada en Supabase
+
+
+LOGIN FIX V3
+- Corregida definitivamente la recursión del generador de IDs.
+- app.js carga antes que la librería XLSX externa.
+- XLSX ya no bloquea el login si no hay Internet.
+- Añadido fallback defensivo para OG/Admin.
+- OG: sin contraseña.
+- Admin: contraseña configurada en Supabase
+
+
+KIDZ 3.6 - HI-RES PRECISE MAP
+- Fuente de mapa Roadmap 8192x8192.
+- Fallback automático al mapa anterior si la fuente 8K no responde.
+- Zoom máximo aumentado de 5x a 12x.
+- Zoom con rueda centrado exactamente bajo el cursor.
+- Doble click acerca 1.75x.
+- Marcadores visuales reducidos a 5px para ubicaciones precisas.
+- Coordenadas admiten decimales (ej. x:52.418, y:73.126).
+- Lista derecha corregida: sin scroll horizontal.
+- Indicador de porcentaje de zoom.
+
+
+KIDZ 3.7 - ADMIN LOCATIONS
+- Marcadores visuales reducidos a 3px.
+- Lista de ubicaciones subida inmediatamente debajo del buscador.
+- Admin: botón + NUEVA UBICACIÓN.
+- Admin: al activarlo, click en el mapa y escribir nombre.
+- Las coordenadas se calculan según el zoom/posición actual.
+- Admin: X para borrar ubicaciones.
+- Las ubicaciones se guardan en localStorage.
+- OG solo puede consultar, buscar y navegar.
+
+
+KIDZ 3.8
+- Ubicaciones iniciales completamente vacías.
+- Nueva clave de almacenamiento para no recuperar los puntos demo anteriores.
+- Admin sigue pudiendo crear/borrar ubicaciones sobre el mapa.
+- Selector de Drogas separado en drugs.js para que no dependa de app.js.
+- No se eliminó contenido ni información de las cuatro drogas.
+- Login rediseñado con la estética del Inicio.
+- Logo K cuadrado del header reemplazado por la imagen Kidz provista.
+- La imagen Kidz también se usa como protagonista visual del login.
+
+
+KIDZ 3.9
+- Inicio: reemplazado el bloque K + KIDZ por la imagen Kidz.
+- Menús/header: arriba a la izquierda queda únicamente la imagen Kidz.
+- Login: efecto flotante reforzado.
+- Inicio: mismo efecto flotante reforzado en la imagen.
+- No se modificaron mapa, ubicaciones, drogas, crafteos ni datos.
+
+
+KIDZ 4.0 - MIEMBROS + BIBLIOTECA
+- Nueva sección Miembros en Inicio y menú superior.
+- Grilla visual de personajes.
+- Admin puede crear, editar y borrar miembros.
+- Cada miembro admite nombre, detalle opcional y foto.
+- Debajo de miembros aparece Biblioteca al hacer scroll.
+- Admin puede subir/borrar fotos de biblioteca.
+- Imágenes se redimensionan/comprimen antes de guardarse.
+- Datos se guardan localmente en el navegador.
+- OG ve la sección limpia, sin controles de edición.
