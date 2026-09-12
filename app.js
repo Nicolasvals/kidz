@@ -63,128 +63,744 @@ let data = loadData();
 let currentView = 'home';
 
 const KIDZ_LOGIN_URL = 'https://zlxcfpwmnksceagbcarl.supabase.co/functions/v1/kidz-login';
+
 const ROLE_KEY = 'kidzSessionRole';
-const ADMIN_SESSION_KEY = 'kidzAdminPassword';
+const ROLE_PASSWORD_KEY = 'kidzRolePassword';
+
 let currentRole = null;
 
-function isAdmin(){ return currentRole === 'admin'; }
 
-function syncAdminVisibility(){
-  const admin = isAdmin();
-  document.querySelectorAll('.admin-only').forEach(el=>{
-    el.style.display = admin ? '' : 'none';
-  });
+/* =========================================================
+   ROLES
+========================================================= */
 
-  document.querySelectorAll(
-    '#view-robberies [data-edit-robbery], #view-robberies [data-delete-robbery], ' +
-    '#view-robberies [data-new-robbery], #newRobberyBtn, ' +
-    '#view-members [data-edit-member], #view-members [data-photo-member], ' +
-    '#view-members [data-delete-member], #addMemberBtn, #view-media [data-delete-media], #addMediaImageBtn, #addMediaVideoBtn'
-  ).forEach(el=>{
-    el.style.display = admin ? '' : 'none';
-  });
-}
-window.syncAdminVisibility = syncAdminVisibility;
-
-function getAdminSessionPassword(){
-  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) || ''; }catch(e){ return ''; }
-}
-window.KidzAuth = {
-  isAdmin: () => isAdmin(),
-  getAdminPassword: () => getAdminSessionPassword()
-};
-function requireAdmin(){
-  if(isAdmin()) return true;
-  alert('Esta acción está disponible solo para Admin.');
-  return false;
-}
-function applyRoleUI(){
-  document.body.classList.toggle('role-admin', isAdmin());
-  document.body.classList.toggle('role-og', currentRole === 'og');
-  const roleLabel=document.querySelector('#roleLabel');
-  if(roleLabel) roleLabel.textContent=isAdmin()?'ADMIN':'OG';
-  document.querySelectorAll('.admin-only').forEach(el=>{
-    el.style.display=isAdmin()?'':'none';
-  });
-  renderAll();
-}
-function enterApp(role){
-  currentRole=role;
-  try{ sessionStorage.setItem(ROLE_KEY,role); }catch(e){}
-  applyRoleUI();
-  setView('home',true);
-
-  const auth=document.querySelector('#authScreen');
-  auth?.classList.add('auth-exit');
-  window.setTimeout(()=>{
-    document.body.classList.add('authenticated','app-enter');
-    auth?.classList.add('hidden');
-    auth?.classList.remove('auth-exit');
-    window.setTimeout(()=>document.body.classList.remove('app-enter'),850);
-  },420);
-}
-function setRole(role){
-  setTimeout(syncAdminVisibility,0);
-  enterApp(role);
-}
-function logoutRole(){
-  currentRole=null;
-  try{ sessionStorage.removeItem(ROLE_KEY); sessionStorage.removeItem(ADMIN_SESSION_KEY); }catch(e){}
-  document.body.classList.remove('authenticated','app-enter','role-admin','role-og');
-  document.querySelector('#adminPassword').value='';
-  document.querySelector('#adminLoginBox').classList.add('hidden');
-  document.querySelector('#authError').textContent='';
-  setView('home',true);
-  const auth=document.querySelector('#authScreen');
-  auth?.classList.remove('hidden','auth-exit');
-  auth?.classList.add('auth-return');
-  window.setTimeout(()=>auth?.classList.remove('auth-return'),550);
-  applyRoleUI();
+function isAdmin(){
+  return currentRole === 'admin';
 }
 
-document.querySelector('#loginOgBtn')?.addEventListener('click',()=>setRole('og'));
-document.querySelector('#showAdminLoginBtn')?.addEventListener('click',()=>{
-  document.querySelector('#adminLoginBox').classList.remove('hidden');
-  document.querySelector('#adminPassword').focus();
-});
-async function tryAdminLogin(){
-  const input=document.querySelector('#adminPassword');
-  const error=document.querySelector('#authError');
-  const btn=document.querySelector('#loginAdminBtn');
-  const password=input?.value?.trim() || '';
-  if(!password){ error.textContent='Ingresá la contraseña.'; input?.focus(); return; }
+function isOG(){
+  return currentRole === 'og';
+}
+
+function canUploadMedia(){
+  return isAdmin() || isOG();
+}
+
+
+/* =========================================================
+   PASSWORD DE SESIÓN
+========================================================= */
+
+function getRoleSessionPassword(){
   try{
-    if(btn){ btn.disabled=true; btn.textContent='ENTRANDO...'; }
-    error.textContent='';
-    const response=await fetch(KIDZ_LOGIN_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({password})
-    });
-    let result={};
-    try{ result=await response.json(); }catch(e){}
-    if(response.ok && result.ok === true && result.role === 'admin'){
-      try{ sessionStorage.setItem(ADMIN_SESSION_KEY,password); }catch(e){}
-      input.value='';
-      setRole('admin');
-      return;
-    }
-    error.textContent='Contraseña incorrecta.';
-    input.select();
-  }catch(err){
-    console.error('Kidz login error:',err);
-    error.textContent='No se pudo conectar con el servidor.';
-  }finally{
-    if(btn){ btn.disabled=false; btn.textContent='ENTRAR'; }
+    return sessionStorage.getItem(ROLE_PASSWORD_KEY) || '';
+  }catch(e){
+    return '';
   }
 }
-document.querySelector('#loginAdminBtn')?.addEventListener('click',tryAdminLogin);
-document.querySelector('#adminPassword')?.addEventListener('keydown',e=>{ if(e.key==='Enter') tryAdminLogin(); });
-document.querySelector('#logoutBtn')?.addEventListener('click',logoutRole);
 
-document.body.classList.remove('authenticated');
-document.querySelector('#authScreen')?.classList.remove('hidden');
 
+/* =========================================================
+   API GLOBAL DE AUTENTICACIÓN
+
+   media.js puede consultar:
+   KidzAuth.isAdmin()
+   KidzAuth.isOG()
+   KidzAuth.getRole()
+   KidzAuth.getPassword()
+========================================================= */
+
+window.KidzAuth = {
+
+  isAdmin: () => isAdmin(),
+
+  isOG: () => isOG(),
+
+  getRole: () => currentRole,
+
+  getPassword: () => getRoleSessionPassword(),
+
+  // Compatibilidad con members.js antiguo
+  getAdminPassword: () => {
+    return isAdmin()
+      ? getRoleSessionPassword()
+      : '';
+  }
+
+};
+
+
+/* =========================================================
+   VISIBILIDAD DE CONTROLES
+========================================================= */
+
+function syncAdminVisibility(){
+
+  const admin = isAdmin();
+  const mediaUploader = canUploadMedia();
+
+
+  /* -----------------------------------------
+     ELEMENTOS EXCLUSIVOS DEL ADMIN
+  ----------------------------------------- */
+
+  document.querySelectorAll('.admin-only').forEach(el => {
+
+    el.style.display = admin
+      ? ''
+      : 'none';
+
+  });
+
+
+  /*
+     ROBOS
+     MIEMBROS
+     BORRAR MULTIMEDIA
+     EDITAR/BORRAR GRUPOS
+
+     TODO ESTO SIGUE SIENDO SOLO ADMIN
+  */
+
+  document.querySelectorAll(
+
+    '#view-robberies [data-edit-robbery], ' +
+
+    '#view-robberies [data-delete-robbery], ' +
+
+    '#view-robberies [data-new-robbery], ' +
+
+    '#newRobberyBtn, ' +
+
+
+    '#view-members [data-edit-member], ' +
+
+    '#view-members [data-photo-member], ' +
+
+    '#view-members [data-delete-member], ' +
+
+    '#addMemberBtn, ' +
+
+
+    '#view-media [data-delete-media], ' +
+
+    '#view-media [data-edit-group], ' +
+
+    '#view-media [data-delete-group], ' +
+
+    '#view-media [data-add-image-group], ' +
+
+    '#view-media [data-add-video-group], ' +
+
+    '#addMediaGroupBtn'
+
+  ).forEach(el => {
+
+    el.style.display = admin
+      ? ''
+      : 'none';
+
+  });
+
+
+  /* -----------------------------------------
+     SUBIR FOTOS / VIDEOS
+
+     ADMIN = SÍ
+     OG    = SÍ
+  ----------------------------------------- */
+
+  document.querySelectorAll(
+    '#addMediaImageBtn, #addMediaVideoBtn'
+  ).forEach(el => {
+
+    el.style.display = mediaUploader
+      ? ''
+      : 'none';
+
+  });
+
+}
+
+window.syncAdminVisibility = syncAdminVisibility;
+
+
+/* =========================================================
+   PROTECCIÓN ADMIN
+========================================================= */
+
+function requireAdmin(){
+
+  if(isAdmin()){
+    return true;
+  }
+
+  alert(
+    'Esta acción está disponible solo para Admin.'
+  );
+
+  return false;
+}
+
+
+/* =========================================================
+   APLICAR INTERFAZ DEL ROL
+========================================================= */
+
+function applyRoleUI(){
+
+  document.body.classList.toggle(
+    'role-admin',
+    isAdmin()
+  );
+
+  document.body.classList.toggle(
+    'role-og',
+    isOG()
+  );
+
+
+  const roleLabel =
+    document.querySelector('#roleLabel');
+
+
+  if(roleLabel){
+
+    roleLabel.textContent =
+      isAdmin()
+        ? 'ADMIN'
+        : 'OG';
+
+  }
+
+
+  syncAdminVisibility();
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   ENTRAR A LA WEB
+========================================================= */
+
+function enterApp(role, password = ''){
+
+  currentRole = role;
+
+
+  try{
+
+    sessionStorage.setItem(
+      ROLE_KEY,
+      role
+    );
+
+
+    if(password){
+
+      sessionStorage.setItem(
+        ROLE_PASSWORD_KEY,
+        password
+      );
+
+    }
+
+  }catch(e){}
+
+
+  applyRoleUI();
+
+  setView(
+    'home',
+    true
+  );
+
+
+  const auth =
+    document.querySelector('#authScreen');
+
+
+  auth?.classList.add(
+    'auth-exit'
+  );
+
+
+  window.setTimeout(() => {
+
+    document.body.classList.add(
+      'authenticated',
+      'app-enter'
+    );
+
+
+    auth?.classList.add(
+      'hidden'
+    );
+
+
+    auth?.classList.remove(
+      'auth-exit'
+    );
+
+
+    window.setTimeout(() => {
+
+      document.body.classList.remove(
+        'app-enter'
+      );
+
+    }, 850);
+
+
+  }, 420);
+
+}
+
+
+/* =========================================================
+   CAMBIAR ROL
+========================================================= */
+
+function setRole(role, password = ''){
+
+  enterApp(
+    role,
+    password
+  );
+
+
+  setTimeout(
+    syncAdminVisibility,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
+
+function logoutRole(){
+
+  currentRole = null;
+
+
+  try{
+
+    sessionStorage.removeItem(
+      ROLE_KEY
+    );
+
+    sessionStorage.removeItem(
+      ROLE_PASSWORD_KEY
+    );
+
+  }catch(e){}
+
+
+  document.body.classList.remove(
+    'authenticated',
+    'app-enter',
+    'role-admin',
+    'role-og'
+  );
+
+
+  const passwordInput =
+    document.querySelector('#adminPassword');
+
+
+  if(passwordInput){
+
+    passwordInput.value = '';
+
+  }
+
+
+  document
+    .querySelector('#adminLoginBox')
+    ?.classList.add('hidden');
+
+
+  const error =
+    document.querySelector('#authError');
+
+
+  if(error){
+
+    error.textContent = '';
+
+  }
+
+
+  setView(
+    'home',
+    true
+  );
+
+
+  const auth =
+    document.querySelector('#authScreen');
+
+
+  auth?.classList.remove(
+    'hidden',
+    'auth-exit'
+  );
+
+
+  auth?.classList.add(
+    'auth-return'
+  );
+
+
+  window.setTimeout(() => {
+
+    auth?.classList.remove(
+      'auth-return'
+    );
+
+  }, 550);
+
+
+  applyRoleUI();
+
+}
+
+
+/* =========================================================
+   VALIDAR CONTRASEÑA EN SUPABASE
+========================================================= */
+
+async function authenticateRolePassword(
+  password,
+  expectedRole = null
+){
+
+  const response =
+    await fetch(
+      KIDZ_LOGIN_URL,
+      {
+
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          password
+        })
+
+      }
+    );
+
+
+  let result = {};
+
+
+  try{
+
+    result =
+      await response.json();
+
+  }catch(e){}
+
+
+  if(
+    !response.ok ||
+    result.ok !== true ||
+    !result.role
+  ){
+
+    throw new Error(
+      'Contraseña incorrecta.'
+    );
+
+  }
+
+
+  if(
+    expectedRole &&
+    result.role !== expectedRole
+  ){
+
+    throw new Error(
+
+      expectedRole === 'og'
+
+        ? 'Esa contraseña no corresponde al perfil OG.'
+
+        : 'Esa contraseña no corresponde al perfil Admin.'
+
+    );
+
+  }
+
+
+  return result.role;
+
+}
+
+
+/* =========================================================
+   LOGIN OG
+========================================================= */
+
+document
+  .querySelector('#loginOgBtn')
+  ?.addEventListener(
+    'click',
+    async () => {
+
+
+      const password =
+        window
+          .prompt(
+            'Contraseña OG:',
+            ''
+          )
+          ?.trim() || '';
+
+
+      if(!password){
+        return;
+      }
+
+
+      try{
+
+
+        const role =
+          await authenticateRolePassword(
+            password,
+            'og'
+          );
+
+
+        setRole(
+          role,
+          password
+        );
+
+
+      }catch(err){
+
+
+        alert(
+          err?.message ||
+          'No se pudo iniciar sesión como OG.'
+        );
+
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   MOSTRAR LOGIN ADMIN
+========================================================= */
+
+document
+  .querySelector('#showAdminLoginBtn')
+  ?.addEventListener(
+    'click',
+    () => {
+
+      document
+        .querySelector('#adminLoginBox')
+        ?.classList.remove(
+          'hidden'
+        );
+
+
+      document
+        .querySelector('#adminPassword')
+        ?.focus();
+
+    }
+  );
+
+
+/* =========================================================
+   LOGIN ADMIN
+========================================================= */
+
+async function tryAdminLogin(){
+
+  const input =
+    document.querySelector(
+      '#adminPassword'
+    );
+
+
+  const error =
+    document.querySelector(
+      '#authError'
+    );
+
+
+  const btn =
+    document.querySelector(
+      '#loginAdminBtn'
+    );
+
+
+  const password =
+    input?.value?.trim() || '';
+
+
+  if(!password){
+
+    if(error){
+
+      error.textContent =
+        'Ingresá la contraseña.';
+
+    }
+
+
+    input?.focus();
+
+    return;
+
+  }
+
+
+  try{
+
+
+    if(btn){
+
+      btn.disabled = true;
+
+      btn.textContent =
+        'ENTRANDO...';
+
+    }
+
+
+    if(error){
+
+      error.textContent = '';
+
+    }
+
+
+    const role =
+      await authenticateRolePassword(
+        password,
+        'admin'
+      );
+
+
+    if(input){
+
+      input.value = '';
+
+    }
+
+
+    setRole(
+      role,
+      password
+    );
+
+
+  }catch(err){
+
+
+    console.error(
+      'Kidz login error:',
+      err
+    );
+
+
+    if(error){
+
+      error.textContent =
+        err?.message ||
+        'No se pudo conectar con el servidor.';
+
+    }
+
+
+    input?.select();
+
+
+  }finally{
+
+
+    if(btn){
+
+      btn.disabled = false;
+
+      btn.textContent =
+        'ENTRAR';
+
+    }
+
+
+  }
+
+}
+
+
+/* =========================================================
+   EVENTOS LOGIN
+========================================================= */
+
+document
+  .querySelector('#loginAdminBtn')
+  ?.addEventListener(
+    'click',
+    tryAdminLogin
+  );
+
+
+document
+  .querySelector('#adminPassword')
+  ?.addEventListener(
+    'keydown',
+    e => {
+
+      if(e.key === 'Enter'){
+
+        tryAdminLogin();
+
+      }
+
+    }
+  );
+
+
+document
+  .querySelector('#logoutBtn')
+  ?.addEventListener(
+    'click',
+    logoutRole
+  );
+
+
+/* =========================================================
+   ESTADO INICIAL
+========================================================= */
+
+document.body.classList.remove(
+  'authenticated'
+);
+
+
+document
+  .querySelector('#authScreen')
+  ?.classList.remove(
+    'hidden'
+  );
 
 function loadData(){
   try{
