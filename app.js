@@ -554,53 +554,12 @@ document
   .querySelector('#loginOgBtn')
   ?.addEventListener(
     'click',
-    async () => {
+    () => {
 
-
-      const password =
-        window
-          .prompt(
-            'Contraseña OG:',
-            ''
-          )
-          ?.trim() || '';
-
-
-      if(!password){
-        return;
-      }
-
-
-      try{
-
-
-        const role =
-          await authenticateRolePassword(
-            password,
-            'og'
-          );
-
-
-        setRole(
-          role,
-          password
-        );
-
-
-      }catch(err){
-
-
-        alert(
-          err?.message ||
-          'No se pudo iniciar sesión como OG.'
-        );
-
-
-      }
+      setRole('og');
 
     }
   );
-
 
 /* =========================================================
    MOSTRAR LOGIN ADMIN
