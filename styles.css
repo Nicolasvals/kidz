@@ -9213,16 +9213,28 @@ body:not(.role-admin) .members-sync-state{
   color:#566c83;
 }
 
-/* Media admin controls remain truly Admin-only */
+/* MEDIA PERMISSIONS
+   Admin + OG: pueden subir imágenes/videos
+   Solo Admin: borrar contenido y administrar grupos */
 body:not(.role-admin) #view-media .admin-only,
-body:not(.role-admin) #view-media [data-delete-media],
-body:not(.role-admin) #addMediaImageBtn,
-body:not(.role-admin) #addMediaVideoBtn{
+body:not(.role-admin) #view-media [data-delete-media]{
   display:none!important;
 }
 
-body.role-admin #view-media .media-toolbar{
+#view-media .media-toolbar{
   display:flex!important;
+}
+
+body:not(.role-admin):not(.role-og) #addMediaImageBtn,
+body:not(.role-admin):not(.role-og) #addMediaVideoBtn{
+  display:none!important;
+}
+
+body.role-admin #addMediaImageBtn,
+body.role-admin #addMediaVideoBtn,
+body.role-og #addMediaImageBtn,
+body.role-og #addMediaVideoBtn{
+  display:inline-flex!important;
 }
 
 @media(max-width:850px){

@@ -68,6 +68,7 @@ const ADMIN_SESSION_KEY = 'kidzAdminPassword';
 let currentRole = null;
 
 function isAdmin(){ return currentRole === 'admin'; }
+function isOG(){ return currentRole === 'og'; }
 
 function syncAdminVisibility(){
   const admin = isAdmin();
@@ -79,9 +80,14 @@ function syncAdminVisibility(){
     '#view-robberies [data-edit-robbery], #view-robberies [data-delete-robbery], ' +
     '#view-robberies [data-new-robbery], #newRobberyBtn, ' +
     '#view-members [data-edit-member], #view-members [data-photo-member], ' +
-    '#view-members [data-delete-member], #addMemberBtn, #view-media [data-delete-media], #addMediaImageBtn, #addMediaVideoBtn'
+    '#view-members [data-delete-member], #addMemberBtn, #view-media [data-delete-media]'
   ).forEach(el=>{
     el.style.display = admin ? '' : 'none';
+  });
+
+  const canUpload = admin || isOG();
+  document.querySelectorAll('#addMediaImageBtn, #addMediaVideoBtn').forEach(el=>{
+    el.style.display = canUpload ? '' : 'none';
   });
 }
 window.syncAdminVisibility = syncAdminVisibility;
@@ -91,6 +97,8 @@ function getAdminSessionPassword(){
 }
 window.KidzAuth = {
   isAdmin: () => isAdmin(),
+  isOG: () => isOG(),
+  getRole: () => currentRole,
   getAdminPassword: () => getAdminSessionPassword()
 };
 function requireAdmin(){

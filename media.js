@@ -20,6 +20,12 @@
     function isAdmin(){
       return !!window.KidzAuth?.isAdmin?.() || document.body.classList.contains('role-admin');
     }
+    function isOG(){
+      return !!window.KidzAuth?.isOG?.() || document.body.classList.contains('role-og');
+    }
+    function canUploadMedia(){
+      return isAdmin() || isOG();
+    }
     function adminPassword(){
       return window.KidzAuth?.getAdminPassword?.() || '';
     }
@@ -48,14 +54,26 @@
       return Array.isArray(j.items)?j.items:[];
     }
     async function apiWrite(resource,action,payload={}){
-      if(!isAdmin()) throw new Error('Solo Admin puede modificar multimedia.');
-      const password=adminPassword();
-      if(!password) throw new Error('Volvé a ingresar al modo Admin para guardar cambios.');
+      // Fotos/videos: Admin + OG pueden SUBIR.
+      // Borrar contenido y administrar grupos: solo Admin.
+      if(resource === 'gallery' && action === 'upsert'){
+        if(!canUploadMedia()) throw new Error('No tenés permisos para subir contenido.');
+      }else{
+        if(!isAdmin()) throw new Error('Esta acción está disponible solo para Admin.');
+      }
+
+      const password = isAdmin() ? adminPassword() : '';
+
+      if(isAdmin() && !password){
+        throw new Error('Volvé a ingresar al modo Admin para guardar cambios.');
+      }
+
       const r=await fetch(API_URL,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({resource,action,password,...payload})
       });
+
       const j=await r.json().catch(()=>({}));
       if(!r.ok||!j.ok) throw new Error(j.error||'No se pudo guardar.');
       return j;
@@ -217,7 +235,7 @@
     }
 
     addImageBtn?.addEventListener('click',()=>{
-      if(!isAdmin()) return;
+      if(!canUploadMedia()) return;
       pendingImageGroupId=chooseGroup('image');
       imageInput?.click();
     });
@@ -225,7 +243,7 @@
     imageInput?.addEventListener('change',async()=>{
       const file=imageInput.files?.[0];
       imageInput.value='';
-      if(!file||!isAdmin()) return;
+      if(!file||!canUploadMedia()) return;
       const caption=prompt('Nombre o descripción de la imagen (opcional):','');
       if(caption===null) return;
       try{
@@ -238,7 +256,7 @@
     });
 
     async function addVideo(groupId=''){
-      if(!isAdmin()) return;
+      if(!canUploadMedia()) return;
       if(!groupId) groupId=chooseGroup('video');
       const url=prompt('Pegá el enlace del video (YouTube, Vimeo o MP4):','');
       if(!url) return;
@@ -254,7 +272,6 @@
     addVideoBtn?.addEventListener('click',()=>addVideo());
 
     grid.addEventListener('click',async e=>{
-      if(!isAdmin()) return;
 
       const addImg=e.target.closest('[data-add-image-group]');
       if(addImg){
