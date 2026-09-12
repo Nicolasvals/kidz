@@ -57,6 +57,7 @@
       <button class="nav-btn" data-view="crafts">Crafteos</button>
       <button class="nav-btn" data-view="sales">Ventas</button>
       <button class="nav-btn" data-view="members">Miembros</button>
+      <button class="nav-btn" data-view="media">Imágenes y videos</button>
     </nav>
     <div class="header-admin-actions"><button class="session-btn" id="logoutBtn" title="Cambiar perfil">CAMBIAR PERFIL</button></div>
   </header>
@@ -77,7 +78,8 @@
             <button class="home-word" data-go="drugs"><span class="home-word-index">03</span><span class="home-word-title">DROGAS</span><span class="home-word-desc">Procesos y referencias</span></button>
             <button class="home-word" data-go="crafts"><span class="home-word-index">04</span><span class="home-word-title">CRAFTEOS</span><span class="home-word-desc">Recetas y calculadora</span></button>
             <button class="home-word home-word-soon" data-go="sales"><span class="home-word-index">05</span><span class="home-word-title">VENTAS</span><span class="home-word-desc">Próximamente</span></button>
-            <button class="home-word" data-go="members"><span class="home-word-index">06</span><span class="home-word-title">MIEMBROS</span><span class="home-word-desc">Personajes y biblioteca</span></button>
+            <button class="home-word" data-go="members"><span class="home-word-index">06</span><span class="home-word-title">MIEMBROS</span><span class="home-word-desc">Personajes de Kidz</span></button>
+            <button class="home-word" data-go="media"><span class="home-word-index">07</span><span class="home-word-title">IMÁGENES Y VIDEOS</span><span class="home-word-desc">Archivo visual de Kidz</span></button>
           </div>
           <div class="home-footer-line"><span></span><b>KIDZ // PRIVATE ACCESS</b><span></span></div>
         </div>
@@ -203,21 +205,26 @@
 
       <div id="membersGrid" class="members-grid"></div>
 
-      <div class="members-gallery-section">
-        <div class="members-gallery-head">
-          <div>
-            <div class="members-gallery-kicker">KIDZ // ARCHIVE</div>
-            <h3>Biblioteca</h3>
-            <p>Fotos, recuerdos y momentos del grupo.</p>
-          </div>
-          <button type="button" class="members-text-action admin-only" id="addGalleryPhotoBtn">+ AÑADIR FOTO</button>
-        </div>
+      <input id="memberPhotoInput" type="file" accept="image/*" hidden>
+</section>
 
-        <div id="membersGallery" class="members-gallery"></div>
+
+    <section id="view-media" class="view media-view">
+      <div class="media-hero">
+        <div class="media-kicker">KIDZ // VISUAL ARCHIVE</div>
+        <h1>Imágenes y videos</h1>
+        <p>Fotos, clips y momentos de Kidz.</p>
       </div>
 
-      <input id="memberPhotoInput" type="file" accept="image/*" hidden>
-      <input id="galleryPhotoInput" type="file" accept="image/*" hidden>
+      <div class="media-toolbar admin-only">
+        <button type="button" class="members-text-action" id="addMediaGroupBtn">+ NUEVO GRUPO</button>
+        <button type="button" class="members-text-action" id="addMediaImageBtn">+ AÑADIR IMAGEN</button>
+        <button type="button" class="members-text-action" id="addMediaVideoBtn">+ AÑADIR VIDEO</button>
+      </div>
+
+      <div id="mediaGrid" class="media-grid"></div>
+
+      <input id="mediaImageInput" type="file" accept="image/*" hidden>
     </section>
 
     <section id="view-sales" class="view">
@@ -272,6 +279,7 @@
   <script src="map.js"></script>
   <script src="drugs.js"></script>
   <script src="members.js"></script>
+  <script src="media.js"></script>
   <script src="craft-sidebar.js"></script>
   <script src="robberies.js"></script>
   <script src="admin-editor.js"></script>

@@ -64,9 +64,35 @@ let currentView = 'home';
 
 const KIDZ_LOGIN_URL = 'https://zlxcfpwmnksceagbcarl.supabase.co/functions/v1/kidz-login';
 const ROLE_KEY = 'kidzSessionRole';
+const ADMIN_SESSION_KEY = 'kidzAdminPassword';
 let currentRole = null;
 
 function isAdmin(){ return currentRole === 'admin'; }
+
+function syncAdminVisibility(){
+  const admin = isAdmin();
+  document.querySelectorAll('.admin-only').forEach(el=>{
+    el.style.display = admin ? '' : 'none';
+  });
+
+  document.querySelectorAll(
+    '#view-robberies [data-edit-robbery], #view-robberies [data-delete-robbery], ' +
+    '#view-robberies [data-new-robbery], #newRobberyBtn, ' +
+    '#view-members [data-edit-member], #view-members [data-photo-member], ' +
+    '#view-members [data-delete-member], #addMemberBtn, #view-media [data-delete-media], #addMediaImageBtn, #addMediaVideoBtn'
+  ).forEach(el=>{
+    el.style.display = admin ? '' : 'none';
+  });
+}
+window.syncAdminVisibility = syncAdminVisibility;
+
+function getAdminSessionPassword(){
+  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) || ''; }catch(e){ return ''; }
+}
+window.KidzAuth = {
+  isAdmin: () => isAdmin(),
+  getAdminPassword: () => getAdminSessionPassword()
+};
 function requireAdmin(){
   if(isAdmin()) return true;
   alert('Esta acción está disponible solo para Admin.');
@@ -98,11 +124,12 @@ function enterApp(role){
   },420);
 }
 function setRole(role){
+  setTimeout(syncAdminVisibility,0);
   enterApp(role);
 }
 function logoutRole(){
   currentRole=null;
-  try{ sessionStorage.removeItem(ROLE_KEY); }catch(e){}
+  try{ sessionStorage.removeItem(ROLE_KEY); sessionStorage.removeItem(ADMIN_SESSION_KEY); }catch(e){}
   document.body.classList.remove('authenticated','app-enter','role-admin','role-og');
   document.querySelector('#adminPassword').value='';
   document.querySelector('#adminLoginBox').classList.add('hidden');
@@ -137,6 +164,7 @@ async function tryAdminLogin(){
     let result={};
     try{ result=await response.json(); }catch(e){}
     if(response.ok && result.ok === true && result.role === 'admin'){
+      try{ sessionStorage.setItem(ADMIN_SESSION_KEY,password); }catch(e){}
       input.value='';
       setRole('admin');
       return;
@@ -1209,3 +1237,5 @@ Pizarra,Objeto,Ejemplo de receta,Metal,1`;
 
 renderAll();
 applyRoleUI();
+
+document.addEventListener('DOMContentLoaded', syncAdminVisibility);

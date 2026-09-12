@@ -1,0 +1,51 @@
+KIDZ — ACTIVAR MIEMBROS ONLINE
+
+1. Supabase > SQL Editor > New query.
+2. Abrí supabase/setup_members.sql, pegalo completo y tocá Run.
+3. Supabase > Edge Functions > Deploy a new function > Via Editor.
+4. Nombre: kidz-members. Reemplazá index.ts por supabase/functions/kidz-members/index.ts y hacé Deploy.
+5. kidz-members > Settings > Verify JWT with legacy secret = OFF.
+
+ADMIN_PASSWORD ya es el mismo Secret que usa kidz-login.
+
+Después de esto:
+- Los visitantes cargan Miembros directamente desde Supabase.
+- Solo Admin puede crear, editar, cambiar imágenes o borrar.
+- Las imágenes nuevas de miembros y la Biblioteca se guardan en Supabase.
+- No hace falta volver a hacer un commit de GitHub para modificar Miembros.
+
+
+ACTUALIZACIÓN 7.2.3 — IMÁGENES Y VIDEOS
+1. Volvé a ejecutar supabase/setup_members.sql en SQL Editor (es seguro: usa IF NOT EXISTS).
+2. Actualizá la Edge Function kidz-members con supabase/functions/kidz-members/index.ts.
+3. Deploy updates.
+4. Verify JWT with legacy secret debe seguir OFF.
+
+La sección “Imágenes y videos” queda separada de Miembros.
+Admin puede subir imágenes, agregar enlaces de YouTube/Vimeo/MP4 y borrar contenido.
+
+
+ACTUALIZACIÓN 7.2.5 — DATOS DE MIEMBROS
+- Ejecutá nuevamente supabase/setup_members.sql.
+- Volvé a desplegar kidz-members usando supabase/functions/kidz-members/index.ts.
+- Se agregan los campos Nombre completo, State ID y Teléfono.
+- El editor Admin permite modificarlos en adelante.
+- Orgulloso pasa a llamarse KB.
+
+
+ACTUALIZACIÓN 7.2.6 — MALIK + GRUPOS DE FOTOS/VIDEOS
+
+1. Ejecutá otra vez supabase/setup_members.sql en SQL Editor.
+2. Actualizá la Edge Function kidz-members con:
+   supabase/functions/kidz-members/index.ts
+3. Hacé Deploy.
+4. Verify JWT with legacy secret debe seguir OFF.
+
+NOVEDADES:
+- Twenty = Caín Cross / State ID 86163 / 728-625-5455.
+- Se agrega Malik Scott / State ID 80016 / 297-127-7767.
+- En Imágenes y videos, Admin puede crear grupos.
+- Cada grupo puede ser de imágenes, videos o mixto.
+- Podés agregar contenido directamente dentro de cada grupo.
+- Podés editar o borrar grupos.
+- Si borrás un grupo, sus imágenes/videos pasan a “Sin grupo” y no se pierden.
