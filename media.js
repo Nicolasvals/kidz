@@ -258,17 +258,10 @@
       }
 
 
-      const password =
-        rolePassword();
-
-
-      if(!password){
-
-        throw new Error(
-          'Volvé a iniciar sesión para guardar cambios.'
-        );
-
-      }
+const password =
+  isAdmin()
+    ? rolePassword()
+    : '';
 
 
       const r =
