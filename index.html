@@ -287,5 +287,78 @@
 
 
 
+
+  <!-- KIDZ MEDIA UPLOAD / VIEWER -->
+  <div id="mediaUploadModal" class="kidz-media-modal" aria-hidden="true">
+    <div class="kidz-media-modal-backdrop" data-media-modal-close></div>
+    <section class="kidz-media-modal-card" role="dialog" aria-modal="true" aria-labelledby="mediaUploadTitle">
+      <button type="button" class="kidz-media-modal-x" data-media-modal-close aria-label="Cerrar">×</button>
+
+      <div class="kidz-media-modal-kicker">KIDZ // MEDIA ARCHIVE</div>
+      <h2 id="mediaUploadTitle">Añadir imagen</h2>
+      <p class="kidz-media-modal-copy">Subí el archivo, elegí dónde guardarlo y agregá una descripción si querés.</p>
+
+      <div id="mediaUploadImageArea" class="media-upload-image-area">
+        <label class="media-dropzone" id="mediaDropzone">
+          <input id="mediaModalFile" type="file" accept="image/*">
+          <div id="mediaDropzoneEmpty" class="media-dropzone-empty">
+            <span class="media-dropzone-plus">+</span>
+            <strong>Seleccionar imagen</strong>
+            <small>PNG, JPG o WEBP · también podés arrastrarla acá</small>
+          </div>
+          <img id="mediaModalPreview" class="media-modal-preview" alt="">
+        </label>
+      </div>
+
+      <div id="mediaUploadVideoArea" class="media-upload-video-area hidden">
+        <label class="media-field">
+          <span>ENLACE DEL VIDEO</span>
+          <input id="mediaModalVideoUrl" type="url" placeholder="YouTube, Vimeo o enlace MP4">
+        </label>
+      </div>
+
+      <div class="media-modal-fields">
+        <label class="media-field">
+          <span>NOMBRE / DESCRIPCIÓN</span>
+          <input id="mediaModalCaption" type="text" maxlength="160" placeholder="Ej: Reunión en Mirror Park">
+        </label>
+
+        <label class="media-field">
+          <span>GRUPO</span>
+          <select id="mediaModalGroup"></select>
+        </label>
+
+        <label id="mediaNewGroupWrap" class="media-field hidden">
+          <span>NOMBRE DEL NUEVO GRUPO</span>
+          <input id="mediaModalNewGroup" type="text" maxlength="80" placeholder="Ej: Reuniones, Robos, Recuerdos...">
+        </label>
+      </div>
+
+      <div class="kidz-media-modal-actions">
+        <button type="button" class="media-modal-secondary" data-media-modal-close>Cancelar</button>
+        <button type="button" class="media-modal-primary" id="mediaModalSave">Guardar</button>
+      </div>
+      <div id="mediaModalStatus" class="media-modal-status"></div>
+    </section>
+  </div>
+
+  <div id="mediaViewer" class="kidz-media-viewer" aria-hidden="true">
+    <div class="kidz-media-viewer-backdrop" data-media-viewer-close></div>
+    <section class="kidz-media-viewer-card" role="dialog" aria-modal="true">
+      <button type="button" class="kidz-media-viewer-x" data-media-viewer-close aria-label="Cerrar">×</button>
+      <div class="kidz-media-viewer-stage">
+        <img id="mediaViewerImage" alt="">
+      </div>
+      <div class="kidz-media-viewer-footer">
+        <div>
+          <span class="kidz-media-modal-kicker">KIDZ // IMAGE VIEWER</span>
+          <h3 id="mediaViewerCaption">Imagen</h3>
+          <p id="mediaViewerGroup">General</p>
+        </div>
+        <a id="mediaViewerDownload" class="media-modal-primary" download>DESCARGAR</a>
+      </div>
+    </section>
+  </div>
+
 </body>
 </html>
