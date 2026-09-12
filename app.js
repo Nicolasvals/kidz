@@ -552,14 +552,9 @@ async function authenticateRolePassword(
 
 document
   .querySelector('#loginOgBtn')
-  ?.addEventListener(
-    'click',
-    () => {
-
-      setRole('og');
-
-    }
-  );
+  ?.addEventListener('click', () => {
+    setRole('og');
+  });
 
 /* =========================================================
    MOSTRAR LOGIN ADMIN
