@@ -10239,4 +10239,35 @@ body.kidz-cinematic #view-members .member-card:nth-child(even) .member-card-info
   .members-group{
     padding:90px 8px 120px;
   }
+/* =========================================================
+   KIDZ 7.2 // CRAFTEOS — MOSTRAR TODOS LOS MATERIALES
+   ========================================================= */
+#view-crafts .craft-workbench{
+  height:auto!important;
+  min-height:250px!important;
+  align-items:stretch!important;
+}
+
+#view-crafts .craft-workbench > .craft-workbench-main{
+  height:auto!important;
+  min-height:250px!important;
+}
+
+#view-crafts .craft-material-blueprint{
+  flex:0 0 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+
+#view-crafts .craft-workbench > .craft-workbench-media{
+  height:auto!important;
+  min-height:250px!important;
+  align-self:stretch!important;
+}
+
+#view-crafts .craft-workbench > .craft-workbench-media img{
+  height:235px!important;
+  max-height:235px!important;
 }
