@@ -64,10 +64,13 @@ let currentView = 'home';
 
 const KIDZ_LOGIN_URL = 'https://zlxcfpwmnksceagbcarl.supabase.co/functions/v1/kidz-login';
 const ROLE_KEY = 'kidzSessionRole';
-const ADMIN_SESSION_KEY = 'kidzAdminPassword';
+const ADMIN_SESSION_KEY = 'kidzAdminSession';
 let currentRole = null;
 
-function isAdmin(){ return currentRole === 'admin'; }
+// Purga el key viejo que guardaba la contraseña en claro (brecha de seguridad).
+try{ sessionStorage.removeItem('kidzAdminPassword'); }catch(e){}
+
+function isAdmin(){ return currentRole === 'admin' && validAdminToken(); }
 function isOG(){ return currentRole === 'og'; }
 
 function syncAdminVisibility(){
@@ -92,14 +95,26 @@ function syncAdminVisibility(){
 }
 window.syncAdminVisibility = syncAdminVisibility;
 
-function getAdminSessionPassword(){
+function getAdminSessionToken(){
   try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) || ''; }catch(e){ return ''; }
+}
+// Mínima validación en el cliente: formato correcto y no expirado. La firma
+// HMAC solo puede verificarla el servidor; aquí basta para que un valor forjado
+// o un token vencido no abran el rol admin y para no guardar la contraseña.
+function validAdminToken(){
+  const token = getAdminSessionToken();
+  if(!token) return false;
+  const m = /^kidz:session:(\d+):/.exec(token);
+  if(!m) return false;
+  return Number(m[1]) > Date.now();
 }
 window.KidzAuth = {
   isAdmin: () => isAdmin(),
   isOG: () => isOG(),
   getRole: () => currentRole,
-  getAdminPassword: () => getAdminSessionPassword()
+  // Devuelve el token de sesión (nunca la contraseña en claro). Las escrituras
+  // lo envían en el campo "password" y el servidor lo valida firmado+vigencia.
+  getAdminPassword: () => getAdminSessionToken()
 };
 function requireAdmin(){
   if(isAdmin()) return true;
@@ -116,7 +131,7 @@ function applyRoleUI(){
   });
   renderAll();
 }
-function enterApp(role){
+const enterApp = (role) => {
   currentRole=role;
   try{ sessionStorage.setItem(ROLE_KEY,role); }catch(e){}
   applyRoleUI();
@@ -130,14 +145,31 @@ function enterApp(role){
     auth?.classList.remove('auth-exit');
     window.setTimeout(()=>document.body.classList.remove('app-enter'),850);
   },420);
-}
-function setRole(role){
+};
+// Ruta interna de activación: NO existe un binding global "setRole" navegable
+// desde la consola que conceda admin. El único camino a admin es el login que
+// valida la contraseña contra kidz-login y guarda el token emitido por él.
+const activateRole = (role) => {
   setTimeout(syncAdminVisibility,0);
   enterApp(role);
-}
+};
+// Decoy: conserva el nombre histórico por compatibilidad pero no otorga ningún
+// privilegio. isAdmin() exige el token firmado que solo kidz-login emite.
+window.setRole = (role) => {
+  if(role === 'admin'){
+    console.warn('[kidz] setRole("admin") está bloqueado: el rol admin solo se otorga validando la contraseña en el servidor.');
+    return;
+  }
+  console.warn('[kidz] setRole() está obsoleto y no concede privilegios.');
+};
 function logoutRole(){
   currentRole=null;
-  try{ sessionStorage.removeItem(ROLE_KEY); sessionStorage.removeItem(ADMIN_SESSION_KEY); }catch(e){}
+  try{
+    sessionStorage.removeItem(ROLE_KEY);
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    // Limpieza del key viejo que pudo quedar con la contraseña en claro.
+    sessionStorage.removeItem('kidzAdminPassword');
+  }catch(e){}
   document.body.classList.remove('authenticated','app-enter','role-admin','role-og');
   document.querySelector('#adminPassword').value='';
   document.querySelector('#adminLoginBox').classList.add('hidden');
@@ -150,7 +182,7 @@ function logoutRole(){
   applyRoleUI();
 }
 
-document.querySelector('#loginOgBtn')?.addEventListener('click',()=>setRole('og'));
+document.querySelector('#loginOgBtn')?.addEventListener('click',()=>activateRole('og'));
 document.querySelector('#showAdminLoginBtn')?.addEventListener('click',()=>{
   document.querySelector('#adminLoginBox').classList.remove('hidden');
   document.querySelector('#adminPassword').focus();
@@ -172,9 +204,15 @@ async function tryAdminLogin(){
     let result={};
     try{ result=await response.json(); }catch(e){}
     if(response.ok && result.ok === true && result.role === 'admin'){
-      try{ sessionStorage.setItem(ADMIN_SESSION_KEY,password); }catch(e){}
+      const token = typeof result.token === 'string' && result.token ? result.token : '';
+      if(!token){
+        error.textContent='La sesión no se pudo emitir: actualizá la Edge Function kidz-login.';
+        input.select();
+        return;
+      }
+      try{ sessionStorage.setItem(ADMIN_SESSION_KEY, token); }catch(e){}
       input.value='';
-      setRole('admin');
+      activateRole('admin');
       return;
     }
     error.textContent='Contraseña incorrecta.';

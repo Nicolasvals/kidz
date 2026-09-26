@@ -13,6 +13,35 @@ function json(data: unknown, status = 200) {
   });
 }
 
+// ── Token helpers (mismos que kidz-login) ─────────────────────────────
+function toHex(bytes: Uint8Array): string {
+  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function hmacHex(secretKey: string, payload: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secretKey),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
+  return toHex(new Uint8Array(sig));
+}
+
+async function verifyToken(secretKey: string, token: string): Promise<boolean> {
+  const dot = token.lastIndexOf(".");
+  if (dot <= 0) return false;
+  const payload = token.slice(0, dot);
+  const sig = token.slice(dot + 1);
+  if (!/^[0-9a-f]{64}$/.test(sig)) return false;
+  if (sig !== (await hmacHex(secretKey, payload))) return false;
+  const m = /^kidz:session:(\d+):/.exec(payload);
+  if (!m) return false;
+  return Number(m[1]) > Date.now();
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
@@ -22,8 +51,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-    const adminPassword = Deno.env.get("ADMIN_PASSWORD") || "";
-
     if (req.method === "GET") {
       const resource = url.searchParams.get("resource") || "members";
       const table =
@@ -47,7 +74,11 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const resource = String(body.resource || "");
     const action = String(body.action || "");
-    const isAdmin = !!body.password && body.password === adminPassword;
+    const secret = Deno.env.get("ADMIN_PASSWORD") || "";
+    const credential = String(body.password || "");
+    const isAdmin =
+      credential !== "" &&
+      (credential === secret || (await verifyToken(secret, credential)));
 
     // Public/OG-capable writes: upload media and create/edit groups.
     // Destructive actions + member management remain Admin-only.

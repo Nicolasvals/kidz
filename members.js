@@ -90,7 +90,7 @@
 
         if(remoteMembers.length){
           members = remoteMembers;
-        }else if(!members.length){
+        }else if(!members.length){  
           members = DEFAULT_MEMBERS.map(x=>({...x}));
         }
         writeCache();

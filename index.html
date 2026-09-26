@@ -197,6 +197,12 @@
         <div class="members-kicker">KIDZ // CREW DATABASE</div>
         <h2>Miembros</h2>
         <p>Personajes que forman parte de Kidz.</p>
+        <span class="members-hero-scroll">
+          <span>DESPLAZATE</span>
+          <svg class="members-hero-scroll-ic" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
 
       <div class="members-toolbar admin-only">
@@ -204,6 +210,8 @@
       </div>
 
       <div id="membersGrid" class="members-grid"></div>
+
+      <div id="membersGroup" class="members-group"></div>
 
       <input id="memberPhotoInput" type="file" accept="image/*" hidden>
 </section>
@@ -275,10 +283,14 @@
 
   <input id="hiddenImageInput" type="file" accept="image/*" hidden />
 
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
   <script src="app.js"></script>
   <script src="map.js"></script>
   <script src="drugs.js"></script>
   <script src="members.js"></script>
+  <script src="members-anim.js"></script>
   <script src="media.js"></script>
   <script src="craft-sidebar.js"></script>
   <script src="robberies.js"></script>

@@ -755,7 +755,72 @@ body.live-sidebar-open .site-header{
   padding:10px;
   font-size:12px;
 }
-\n\n/* KIDZ 1.4 — Ventas + ajustes visuales */\n.dashboard-grid{\n  grid-template-columns:repeat(4,minmax(0,1fr));\n}\n.sales-card{\n  position:relative;\n  background:linear-gradient(150deg,rgba(215,255,63,.045),transparent 55%),var(--panel);\n}\n.coming-soon-pill{\n  position:absolute;\n  top:18px;\n  right:18px;\n  padding:5px 8px;\n  border:1px solid rgba(215,255,63,.2);\n  border-radius:999px;\n  color:var(--accent);\n  background:rgba(215,255,63,.07);\n  font-size:8px;\n  font-weight:800;\n  letter-spacing:.1em;\n}\n.coming-soon-panel{\n  min-height:440px;\n  border:1px solid var(--line);\n  border-radius:24px;\n  background:\n    radial-gradient(circle at 50% 30%,rgba(215,255,63,.08),transparent 28%),\n    linear-gradient(180deg,rgba(255,255,255,.015),transparent),\n    var(--panel);\n  display:flex;\n  flex-direction:column;\n  align-items:center;\n  justify-content:center;\n  text-align:center;\n  padding:42px 24px;\n  box-shadow:var(--shadow);\n}\n.coming-soon-icon{\n  width:66px;\n  height:66px;\n  display:grid;\n  place-items:center;\n  margin-bottom:18px;\n  border-radius:20px;\n  background:var(--accent-soft);\n  border:1px solid rgba(215,255,63,.2);\n  color:var(--accent);\n  font:800 28px "Space Grotesk";\n}\n.coming-soon-panel h2{\n  margin:16px 0 8px;\n  font:700 34px "Space Grotesk";\n  letter-spacing:-.03em;\n}\n.coming-soon-panel p{\n  margin:0 0 24px;\n  color:var(--muted);\n  font-size:13px;\n}\n@media(max-width:1050px){\n  .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));}\n}\n@media(max-width:650px){\n  .dashboard-grid{grid-template-columns:1fr;}\n  .coming-soon-panel{min-height:360px;}\n}\n
+/* KIDZ 1.4 — Ventas + ajustes visuales */
+.dashboard-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.sales-card{
+  position:relative;
+  background:linear-gradient(150deg,rgba(215,255,63,.045),transparent 55%),var(--panel);
+}
+.coming-soon-pill{
+  position:absolute;
+  top:18px;
+  right:18px;
+  padding:5px 8px;
+  border:1px solid rgba(215,255,63,.2);
+  border-radius:999px;
+  color:var(--accent);
+  background:rgba(215,255,63,.07);
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.1em;
+}
+.coming-soon-panel{
+  min-height:440px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(215,255,63,.08),transparent 28%),
+    linear-gradient(180deg,rgba(255,255,255,.015),transparent),
+    var(--panel);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:42px 24px;
+  box-shadow:var(--shadow);
+}
+.coming-soon-icon{
+  width:66px;
+  height:66px;
+  display:grid;
+  place-items:center;
+  margin-bottom:18px;
+  border-radius:20px;
+  background:var(--accent-soft);
+  border:1px solid rgba(215,255,63,.2);
+  color:var(--accent);
+  font:800 28px "Space Grotesk";
+}
+.coming-soon-panel h2{
+  margin:16px 0 8px;
+  font:700 34px "Space Grotesk";
+  letter-spacing:-.03em;
+}
+.coming-soon-panel p{
+  margin:0 0 24px;
+  color:var(--muted);
+  font-size:13px;
+}
+@media(max-width:1050px){
+  .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:650px){
+  .dashboard-grid{grid-template-columns:1fr;}
+  .coming-soon-panel{min-height:360px;}
+}
 /* Acceso por perfiles */
 .auth-screen{
   position:fixed;inset:0;z-index:200;background:rgba(7,10,12,.97);
@@ -4181,6 +4246,11 @@ body.app-enter #view-home.active .home-graffiti-wrap{
 .members-hero{
   text-align:center;
   padding:14px 0 28px;
+  min-height:calc(100svh - 110px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
 
 .members-kicker,
@@ -8314,7 +8384,7 @@ body.authenticated.live-sidebar-open #liveCraftSidebar{
 }
 
 #view-members .members-grid{
-  position:relative!important;
+  position:relative;
   z-index:2!important;
   width:min(1320px,94vw)!important;
   max-width:none!important;
@@ -9028,7 +9098,7 @@ body:not(.role-admin) .members-sync-state{
 
 #view-members .member-card{
   isolation:visible!important;
-  z-index:1!important;
+  z-index:1;
 }
 
 #view-members .member-card:hover{
@@ -9652,5 +9722,521 @@ body:not(.role-admin) #addMediaGroupBtn{
   .kidz-media-viewer-footer{
     align-items:flex-start;
     flex-direction:column;
+  }
+}
+
+
+/* =========================================================
+   KIDZ // MEMBERS GSAP SCROLL ANIMATIONS
+   Capas con will-change para que los tweens sean fluidos.
+   ========================================================= */
+#view-members .member-card,
+#view-members .member-card-info > *,
+#view-members .member-index,
+#view-members .member-photo-wrap{
+  will-change:transform,opacity;
+}
+
+
+/* =========================================================
+   KIDZ // MEMBERS CINEMATIC — ONE MEMBER PER SCREEN
+   Se activa solo cuando members-anim.js agrega la clase
+   body.kidz-cinematic (es decir, GSAP cargado y sin
+   prefers-reduced-motion). Sin JS todo vuelve al flujo normal.
+   ========================================================= */
+
+body.kidz-cinematic #view-members .members-grid{
+  position:relative;
+  height:100vh!important;
+  height:100svh!important;
+  overflow:hidden!important;
+  width:100%!important;
+  margin:0!important;
+}
+
+body.kidz-cinematic #view-members .member-card,
+body.kidz-cinematic #view-members .member-card:nth-child(even) {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  grid-template-columns: 50% 50% !important;
+  grid-template-areas: "photo info" !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 80px 4vw 0 !important; /* Compensa el header superior */
+  box-sizing: border-box !important;
+}
+
+body.kidz-cinematic #view-members .member-card:nth-child(even) {
+  grid-template-areas: "info photo" !important;
+}
+
+body.kidz-cinematic #view-members .member-photo-wrap {
+  grid-area: photo !important;
+  width: 100% !important;
+  height: 80vh !important;
+  min-height: 0 !important;
+  position: relative !important;
+}
+
+body.kidz-cinematic #view-members .member-photo {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  width: auto !important;
+  max-width: 100% !important;
+  transform: translateX(-50%) !important; /* Centrado estricto en su columna */
+}
+
+/* =========================================================
+   KIDZ // MEMBERS CINEMATIC — LAYOUT FIX (HARDENED)
+   Refuerza y blinda el grid 50/50 del bloque anterior:
+   sin márgenes negativos, foto anclada a su mitad
+   (left:50% / translateX(-50%)) y texto centrado con
+   margen para el header sticky.
+   ========================================================= */
+
+body.kidz-cinematic #view-members .member-card,
+body.kidz-cinematic #view-members .member-card:nth-child(even){
+  display:grid!important;
+  grid-template-columns:50% 50%!important;
+  align-items:center!important;
+  padding-top:80px!important;
+}
+
+body.kidz-cinematic #view-members .member-photo-wrap,
+body.kidz-cinematic #view-members .member-photo-wrap:nth-child(even){
+  grid-area:photo!important;
+}
+
+body.kidz-cinematic #view-members .member-photo{
+  left:50%!important;
+  transform:translateX(-50%) scale(1)!important;
+  transform-origin:center bottom!important;
+  height:100%!important;
+  max-height:100%!important;
+  width:auto!important;
+  max-width:96%!important;
+}
+
+body.kidz-cinematic #view-members .member-card:hover .member-photo{
+  transform:translateX(-50%) scale(1.03)!important;
+}
+
+body.kidz-cinematic #view-members .member-card-info,
+body.kidz-cinematic #view-members .member-card:nth-child(even) .member-card-info {
+  grid-area: info !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  text-align: left !important;
+}
+body.kidz-cinematic #view-members .member-card:nth-child(even) .member-card-info {
+  text-align: right !important;
+}
+
+body.kidz-cinematic #view-members .member-card-info h3,
+body.kidz-cinematic #view-members .member-card:nth-child(even) .member-card-info h3 {
+  max-width: 560px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  font-size: clamp(44px, 4.8vw, 72px) !important;
+  line-height: .9 !important;
+}
+
+@media(max-width:1050px){
+  body.kidz-cinematic #view-members .member-card,
+  body.kidz-cinematic #view-members .member-card:nth-child(even) {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 45vh 1fr !important;
+    grid-template-rows: 45svh 1fr !important;
+    grid-template-areas: "photo" "info" !important;
+    align-items: start !important;
+    padding-top: 90px !important;
+  }
+
+  body.kidz-cinematic #view-members .member-photo-wrap{
+    height:45vh!important;
+    height:45svh!important;
+  }
+
+  body.kidz-cinematic #view-members .member-card-info,
+  body.kidz-cinematic #view-members .member-card:nth-child(even) .member-card-info {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 20px 18px 48px !important;
+    text-align: center !important;
+    align-self: flex-start !important;
+  }
+}
+
+
+/* =========================================================
+   KIDZ // MEMBERS INTRO — PANTALLA INICIAL DEL PIN
+   Overlay de una pantalla que abre la secuencia antes del
+   primer miembro (se crea/elimina desde members-anim.js).
+   ========================================================= */
+
+.members-intro{
+  position:absolute!important;
+  inset:0!important;
+  z-index:5000!important;
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding:88px 6vw 40px!important;
+  /* Sin fondo: deja ver el fondo base de la web (gradiente del body). */
+  text-align:left;
+  pointer-events:none!important;
+}
+
+.members-intro-kicker{
+  color:#4b9cff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+}
+
+.members-intro-title{
+  margin:16px 0 18px;
+  color:#f4f7fc;
+  font:850 clamp(54px,8.5vw,118px)/.9 "Space Grotesk",system-ui,sans-serif;
+  letter-spacing:-.01em;
+}
+
+.mi-line{
+  display:block;
+  overflow:hidden;
+}
+
+.mi-line > span{
+  display:block;
+  will-change:transform,opacity;
+}
+
+.members-intro-sub{
+  color:#7a8b9e;
+  font-size:clamp(13px,1.3vw,16px);
+  line-height:1.65;
+  max-width:430px;
+}
+
+/* Flecha "desplázate" en el hero, centrada a la pantalla. */
+.members-hero-scroll{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-top:34px;
+  color:#6e809d;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+}
+.members-hero-scroll-ic{
+  display:block;
+  color:#3f7fd6;
+  animation:miBob 1.8s ease-in-out infinite;
+}
+@keyframes miBob{
+  0%,100%{transform:translateY(-3px);opacity:.55}
+  50%{transform:translateY(6px);opacity:1}
+}
+
+@media(max-width:1050px){
+  .members-intro{
+    align-items:center!important;
+    padding:92px 5vw 40px!important;
+    text-align:center;
+  }
+  .members-intro-sub{max-width:320px}
+}
+
+
+/* =========================================================
+   KIDZ // MEMBERS FINAL — TITULAR "TODOS JUNTOS"
+   Overlay de cierre de la secuencia pineada: entra LATERAL
+   desde la izquierda mientras el último miembro "vuelve"
+   deslizándose hacia la derecha.
+   ========================================================= */
+
+.members-final{
+  position:absolute!important;
+  inset:0!important;
+  z-index:5000!important;
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:88px 6vw 40px!important;
+  text-align:center;
+  pointer-events:none!important;
+  will-change:transform,opacity;
+}
+.members-final-kicker{
+  color:#4b9cff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+}
+.members-final-title{
+  margin:16px 0 0;
+  color:#f4f7fc;
+  font:850 clamp(54px,8.5vw,118px)/.88 "Space Grotesk",system-ui,sans-serif;
+  letter-spacing:-.065em;
+  text-wrap:balance;
+  will-change:transform,opacity;
+}
+
+@media(max-width:1050px){
+  .members-final{
+    padding:92px 5vw 40px!important;
+  }
+}
+
+
+/* =========================================================
+   KIDZ // MEMBERS GROUP — "TODOS JUNTOS"
+   ========================================================= */
+
+/* Franja "todos en pose": una capa frontal acotada (máx. MAX_FRONT miembros)
+   y los que entren de más se apilan DETRÁS en capas elevadas — cada capa
+   un poco más arriba y menor que la anterior (profundidad tipo foto familiar)
+   para que la fila nunca crezca al infinito. */
+.members-group-strip{
+  position:relative;
+  margin:0 0 64px;
+  padding:10px 0 18px;
+  overflow:visible;
+  height:clamp(520px,72vh,780px);        /* hueco suficiente para las capas */
+}
+.members-strip-slice{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;                             /* baseline común: todas las capas
+                                           apuntan al mismo suelo */
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:0;
+}
+/* Capa frontal: la más grande, ancha y baja (más protagonista) y detrás,
+   cada capa más pequeña, más estrecha y elevándose más arriba. */
+.slice-front{ z-index:5; }
+.slice-front .member-strip-fig + .member-strip-fig{ margin-left:-30px; }
+.slice-back{ z-index:4; }
+.slice-back-1{ bottom:14%; }
+.slice-back-2{ z-index:3; bottom:24%; }
+.slice-back-3{ z-index:2; bottom:33%; }
+.slice-back-4{ z-index:1; bottom:41%; }
+/* Las filas traseras van MUY agrupadas entre sí (solape mayor). */
+.slice-back .member-strip-fig + .member-strip-fig{ margin-left:-38px; }
+/* Fotos: la frontal la más alta; las traseras decrecen de TAMAÑO REAL (caja y
+   visual) pero agrupadas, sin superar a la de delante. */
+.member-strip-fig img{
+  display:block;
+  width:auto;
+  transform-origin:bottom center;
+  height:clamp(300px,44vh,440px);
+}
+.member-strip-fig .member-strip-pholder{
+  height:clamp(300px,44vh,440px);
+  width:clamp(160px,21vw,235px);
+  transform-origin:bottom center;
+}
+.slice-front .member-strip-fig img,
+.slice-front .member-strip-fig .member-strip-pholder{ transform:scale(1); }
+.slice-back-1 .member-strip-fig img,
+.slice-back-1 .member-strip-fig .member-strip-pholder{
+  height:clamp(264px,38vh,384px);
+  transform:scale(.96);
+}
+.slice-back-2 .member-strip-fig img,
+.slice-back-2 .member-strip-fig .member-strip-pholder{
+  height:clamp(234px,33vh,336px);
+  transform:scale(.92);
+}
+.slice-back-3 .member-strip-fig img,
+.slice-back-3 .member-strip-fig .member-strip-pholder{
+  height:clamp(192px,27vh,276px);
+  transform:scale(.88);
+}
+.slice-back-4 .member-strip-fig img,
+.slice-back-4 .member-strip-fig .member-strip-pholder{
+  height:clamp(156px,22vh,232px);
+  transform:scale(.84);
+}
+.member-strip-fig{
+  position:relative;
+  flex:0 0 auto;
+  margin:0;
+  line-height:0;
+}
+.member-strip-fig + .member-strip-fig{margin-left:-16px}
+.member-strip-fig:nth-child(even){z-index:2}
+.member-strip-fig:nth-child(odd){z-index:1}
+.member-strip-fig:nth-child(4n){z-index:3}
+.member-strip-pholder{
+  display:grid;
+  place-items:center;
+  background:linear-gradient(160deg,#0a1423,#050b14 62%);
+  color:#4b9cff;
+  font:800 clamp(30px,4vw,46px)/1 "Space Grotesk",system-ui,sans-serif;
+}
+
+.members-group{
+  width:min(1240px,92vw);
+  margin:0 auto;
+  padding:120px 0 170px;
+  text-align:center;
+}
+.members-group:empty{display:none}
+
+.members-group-head{
+  margin-bottom:58px;
+}
+.members-group-kicker{
+  color:#4b9cff;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.24em;
+}
+.members-group-head h3{
+  margin:14px 0 10px;
+  color:#f4f7fc;
+  font:850 clamp(54px,7.5vw,112px)/.88 "Space Grotesk",system-ui,sans-serif;
+  letter-spacing:-.065em;
+  text-wrap:balance;
+}
+.members-group-head p{
+  margin:0;
+  color:#61758c;
+  font-size:12px;
+}
+.members-group-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:42px 24px;
+  text-align:left;
+}
+.member-group-cell{
+  position:relative;
+  min-width:0;
+  padding-top:14px;
+  border-top:1px solid rgba(68,126,196,.2);
+}
+.member-group-photo{
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:4/5;                     /* card uniforme para todas */
+  background:
+    radial-gradient(circle at 50% 40%,rgba(25,73,130,.13),transparent 62%),
+    #020a13;
+  border:1px solid rgba(57,107,179,.16);
+  transition:border-color .3s ease, box-shadow .3s ease;
+}
+.member-group-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;               /* completa, sin recortar, centrada en la card */
+  filter:saturate(.88) brightness(.92);
+  transition:filter .4s ease;
+}
+/* Card resaltada al hover + sincronizada con su figura en la franja. */
+.member-group-cell{
+  cursor:pointer;
+  transition:border-top-color .3s ease;
+}
+.member-group-cell:focus-visible{
+  outline:2px solid rgba(94,177,255,.7);
+  outline-offset:4px;
+}
+.member-group-cell:hover{
+  border-top-color:rgba(94,177,255,.85);
+}
+.member-group-cell:hover .member-group-photo{
+  border-color:rgba(94,177,255,.55);
+  box-shadow:0 24px 60px rgba(2,10,19,.6),0 0 0 1px rgba(94,177,255,.35);
+}
+.member-group-cell:hover .member-group-photo img{
+  filter:saturate(1.06) brightness(1.04);
+}
+.member-group-cell:hover figcaption strong{
+  color:#9dccff;
+}
+/* La figura correspondiente de la "foto familiar" se enciende al unísono. */
+.member-strip-fig{
+  cursor:pointer;
+}
+.member-strip-fig.is-lit{
+  z-index:40;
+  filter:drop-shadow(0 12px 26px rgba(94,177,255,.45));
+}
+.member-strip-fig.is-lit img,
+.member-strip-fig.is-lit .member-strip-pholder{
+  filter:brightness(1.14) saturate(1.1);
+}
+.member-group-pholder{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  color:#3b8cff;
+  font:900 54px "Space Grotesk",system-ui,sans-serif;
+  text-shadow:0 0 30px rgba(59,140,255,.25);
+}
+.member-group-index{
+  position:absolute;
+  top:16px;
+  left:18px;
+  z-index:3;
+  color:#4b9cff;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.18em;
+}
+.member-group-cell figcaption{
+  margin-top:14px;
+}
+.member-group-role{
+  display:block;
+  color:#4b9cff;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.2em;
+}
+.member-group-cell figcaption strong{
+  display:block;
+  margin-top:6px;
+  color:#eef4fd;
+  font:800 clamp(22px,2.4vw,30px)/1 "Space Grotesk",system-ui,sans-serif;
+  letter-spacing:-.03em;
+}
+
+@media(max-width:980px){
+  .members-group-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:34px 18px;
+  }
+  .members-group-head h3{
+    font-size:clamp(46px,12vw,72px);
+  }
+}
+
+@media(max-width:420px){
+  .members-group{
+    padding:90px 8px 120px;
   }
 }

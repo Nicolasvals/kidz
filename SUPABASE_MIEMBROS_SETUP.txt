@@ -49,3 +49,23 @@ NOVEDADES:
 - Podés agregar contenido directamente dentro de cada grupo.
 - Podés editar o borrar grupos.
 - Si borrás un grupo, sus imágenes/videos pasan a “Sin grupo” y no se pierden.
+
+
+ACTUALIZACIÓN 7.2.7 — SEGURIDAD DEL LOGIN ADMIN (SESIONES CON TOKEN)
+
+1. Actualizá la Edge Function kidz-login con:
+   supabase/functions/kidz-login/index.ts  →  Deploy.
+   (Ahora valida la contraseña y emite un token firmado que expira en 12 h.)
+2. Volvé a desplegar kidz-members con:
+   supabase/functions/kidz-members/index.ts  →  Deploy.
+   (Acepta la contraseña O el token firmado; rechaza valores forjados.)
+3. Verify JWT with legacy secret debe seguir OFF en ambas funciones.
+
+CAMBIO DE SEGURIDAD:
+- El rol admin ya NO se otorga con setRole('admin') en la consola: la ruta está
+  bloqueada y el cliente solo se activa con un token emitido por kidz-login.
+- El navegador ya NO guarda la contraseña en claro. Guarda SOLO el token de
+  sesión (vigencia 12 h), en sessionStorage kidzAdminSession.
+- El cliente descarta tokens vencidos o mal formados; el servidor verifica la
+  firma HMAC con ADMIN_PASSWORD y rechaza cualquier token forjado o pasado de
+  vigencia.
